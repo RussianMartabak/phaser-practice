@@ -2,7 +2,7 @@ import Phaser from "phaser";
 import sky from './assets/sky.png';
 import ground from './assets/platform.png';
 import spriteSheetDude from './assets/dude.png';
-
+import star from './assets/star.png';
 
 var config = {
     type: Phaser.AUTO,
@@ -16,7 +16,7 @@ var config = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: { y: 300 },
+            gravity: { y: 0 },
             debug: true
         }
     },
@@ -35,11 +35,13 @@ function preload ()
     {
         frameWidth: 32,
         frameHeight: 48
-    }
+    },
+    
     )
+    this.load.image('star', star);
 }
-
-var platforms, player, cursors;
+//global namespace
+var platforms, player, cursors, stars;
 function create ()
 {   
     //putting asset
@@ -55,10 +57,26 @@ function create ()
 
     //put player
     player = this.physics.add.sprite(100, 0, 'dude');
+    player.body.setGravityY(300);
     this.physics.add.collider(player, platforms);
 
     player.setBounce(0.1);
     player.setCollideWorldBounds(true);//no clipping
+
+    //put star  with dynamic physics, 11 children, and X of 70 between them
+    stars = this.physics.add.group({
+        key: 'star',
+        repeat: 11,
+        setXY: { x: 12, y: 0, stepX: 70 }
+    });
+
+    stars.children.iterate(function (child) {
+        child.setBounceY(0.8);
+        child.body.setGravityY(500);
+    })
+
+    this.physics.add.collider(stars, platforms);
+
 
     this.anims.create({
         key: 'left',
