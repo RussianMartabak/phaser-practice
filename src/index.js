@@ -4,7 +4,6 @@ import ground from './assets/platform.png';
 import spriteSheetDude from './assets/dude.png';
 
 
-
 var config = {
     type: Phaser.AUTO,
     width: 800,
@@ -17,7 +16,7 @@ var config = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: { y: 300 },
+            gravity: { y: 999 },
             debug: true
         }
     },
@@ -40,17 +39,46 @@ function preload ()
     )
 }
 
-var platforms;
+var platforms, player;
 function create ()
 {   
     //putting asset
     this.add.image(400, 300, 'sky');//x, y, name of image
-    platforms = this.physics.add.staticGroup();
+    platforms = this.physics.add.staticGroup();//static body cannot move or affected by gravity
 
-    platforms.create(400, 568, 'ground').setScale(2).refreshBody();
+
+    platforms.create(400, 568, 'ground').setScale(2).refreshBody();//refreshbody so the physics
+    //adapt to changed size
     platforms.create(600, 400, 'ground');
     platforms.create(50, 250, 'ground');
     platforms.create(750, 220, 'ground');
+
+    //put player
+    player = this.physics.add.sprite(100, 0, 'dude');
+    this.physics.add.collider(player, platforms);
+
+    player.setBounce(0.1);
+    player.setCollideWorldBounds(true);//no clipping
+
+    this.anims.create({
+        key: 'left',
+        frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
+        frameRate: 10,
+        repeat: -1 //means yes loop it
+    });
+
+    this.anims.create({
+        key: 'turn',
+        frames: [ { key: 'dude', frame: 4 } ],
+        frameRate: 20
+    });
+    
+    this.anims.create({
+        key: 'right',
+        frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
+        frameRate: 10,
+        repeat: -1
+    });
 
 }
 
