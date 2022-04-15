@@ -1,0 +1,9 @@
+*{
+    box-sizing: border-box;
+}
+
+#canva{
+    margin: auto;
+    width: 800px;
+    height: 600px;
+}
