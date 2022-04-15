@@ -74,9 +74,13 @@ function create ()
         child.setBounceY(0.8);
         child.body.setGravityY(500);
     })
+    
+    
 
     this.physics.add.collider(stars, platforms);
 
+
+    //global animations
 
     this.anims.create({
         key: 'left',
@@ -101,10 +105,21 @@ function create ()
     cursors = this.input.keyboard.createCursorKeys();
 
     
+
+    
 }
 
 function update ()
 {
+    if(player.body.touching.down) {
+        this.physics.add.overlap(player, stars, collectStar, null, this);
+    }
+
+    //collide handlers
+    function collectStar (player, star) {
+        star.disableBody(true, true);
+        alert('You got a star');
+    }
     //controls
     if (cursors.left.isDown)
     {

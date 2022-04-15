@@ -1,2 +1,2 @@
 # Phaser Practice  
-Files that I make following phaser tutorial. It is probably a good idea to put overlap and event handlers in their own module. Its maybe also a good idea to group animations together
+Files that I make following phaser tutorial. It is probably a good idea to put overlap and event handlers in their own module. Its maybe also a good idea to group animations together. Group calls that set property based on their game object
