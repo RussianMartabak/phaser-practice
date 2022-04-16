@@ -84,7 +84,7 @@ function create ()
 
     this.physics.add.collider(stars, platforms);
     scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
-    this.add.text(100, 100, 'FUCK YOU');
+    
 
     //global animations
 
