@@ -23,6 +23,10 @@ var config = {
     parent: document.querySelector('#canva')
     
 };
+//global namespace
+var platforms, player, cursors, stars, scoreText;
+var score = 0;
+
 var game = new Phaser.Game(config);
 
 function preload ()
@@ -40,11 +44,12 @@ function preload ()
     )
     this.load.image('star', star);
 }
-//global namespace
-var platforms, player, cursors, stars;
+
 function create ()
 {   
     //putting asset
+    
+    
     this.add.image(400, 300, 'sky');//x, y, name of image
     platforms = this.physics.add.staticGroup();//static body cannot move or affected by gravity
 
@@ -78,7 +83,8 @@ function create ()
     
 
     this.physics.add.collider(stars, platforms);
-
+    scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+    this.add.text(100, 100, 'FUCK YOU');
 
     //global animations
 
@@ -111,6 +117,7 @@ function create ()
 
 function update ()
 {
+    //add overlap only if the player touch grass
     if(player.body.touching.down) {
         this.physics.add.overlap(player, stars, collectStar, null, this);
     }
@@ -118,7 +125,9 @@ function update ()
     //collide handlers
     function collectStar (player, star) {
         star.disableBody(true, true);
-        alert('You got a star');
+        score += 10;
+
+        scoreText.setText('Score: ' + score);
     }
     //controls
     if (cursors.left.isDown)
@@ -140,7 +149,8 @@ function update ()
         player.anims.play('turn');
     }
     if (cursors.up.isDown && player.body.touching.down)
-{
-    player.setVelocityY(-330);
-}
+        {
+            player.setVelocityY(-330);
+        }
+
 }
