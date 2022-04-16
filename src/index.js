@@ -3,6 +3,7 @@ import sky from './assets/sky.png';
 import ground from './assets/platform.png';
 import spriteSheetDude from './assets/dude.png';
 import star from './assets/star.png';
+import bombPNG from './assets/bomb.png'
 
 var config = {
     type: Phaser.AUTO,
@@ -24,7 +25,7 @@ var config = {
     
 };
 //global namespace
-var platforms, player, cursors, stars, scoreText;
+var platforms, player, cursors, stars, scoreText, bombs, gameOver;
 var score = 0;
 
 var game = new Phaser.Game(config);
@@ -43,6 +44,7 @@ function preload ()
     
     )
     this.load.image('star', star);
+    this.load.image('bomb', bombPNG);
 }
 
 function create ()
@@ -68,11 +70,30 @@ function create ()
     player.setBounce(0.1);
     player.setCollideWorldBounds(true);//no clipping
 
+    //put bombs
+    bombs = this.physics.add.group();
+    
+    this.physics.add.collider(bombs, platforms);
+
+    this.physics.add.collider(player, bombs, hitBomb, null, this);
+
+    //collide handler
+    function hitBomb (player, bomb)
+    {
+        this.physics.pause();
+
+        player.setTint(0xff0000);
+
+        player.anims.play('turn');
+
+        gameOver = true;
+    }
+
     //put star  with dynamic physics, 11 children, and X of 70 between them
     stars = this.physics.add.group({
         key: 'star',
         repeat: 11,
-        setXY: { x: 12, y: 0, stepX: 70 }
+        setXY: { x: 20, y: 0, stepX: 60 }
     });
 
     stars.children.iterate(function (child) {
@@ -128,6 +149,25 @@ function update ()
         score += 10;
 
         scoreText.setText('Score: ' + score);
+        console.log(stars.countActive(true));
+        if (stars.countActive(true) === 0)
+        {
+            stars.children.iterate(function (child) {
+
+                child.enableBody(true, child.x, 0, true, true);
+
+            });
+
+            var x = (player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
+
+            var bomb = bombs.create(x, 16, 'bomb');
+            bomb.body.setGravityY(400);
+            bomb.setBounce(1);
+            bomb.setCollideWorldBounds(true);
+            bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
+
+        }
+
     }
     //controls
     if (cursors.left.isDown)
